@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "code-runner.executorMap": {
+      "c": "cd $dir && gcc $dir/*.c  -o $main.out && $dir/$main.out"
+    }
+  }
+}

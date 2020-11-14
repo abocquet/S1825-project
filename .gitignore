@@ -1,4 +1,5 @@
-./main
+main.out
+.out
 .vscode
 .idea
 cmake-build-debug
