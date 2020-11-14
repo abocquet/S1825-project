@@ -7,6 +7,16 @@
   "settings": {
     "code-runner.executorMap": {
       "c": "cd $dir && gcc $dir/*.c -lm -mavx -lpthread -O3 -o $main.out && $dir/$main.out"
+    },
+    "files.associations": {
+      "array": "cpp",
+      "deque": "cpp",
+      "string": "cpp",
+      "unordered_map": "cpp",
+      "vector": "cpp",
+      "string_view": "cpp",
+      "initializer_list": "cpp",
+      "ranges": "cpp"
     }
   },
   "launch": {

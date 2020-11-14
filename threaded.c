@@ -5,7 +5,7 @@
 #include "threaded.h"
 #include "naive.h"
 
-#define NB_THREADS 4
+#define NB_THREADS 8
 
 float pthread_norm(float arr[], int n)
 {
@@ -16,14 +16,13 @@ float pthread_norm(float arr[], int n)
     }
 
     pthread_t thread_ids[NB_THREADS];
-    naive_norm_args *thread_arguments[NB_THREADS];
+    naive_norm_args thread_arguments[NB_THREADS];
 
     for (int i = 0; i < NB_THREADS; i++)
     {
-        thread_arguments[i] = malloc(sizeof(naive_norm_args));
-        thread_arguments[i]->arr = arr + n / NB_THREADS * i;
-        thread_arguments[i]->size = n / NB_THREADS;
-        int code = pthread_create(&thread_ids[i], NULL, &naive_norm_pthread_wrapper, thread_arguments[i]);
+        thread_arguments[i].arr = arr + n / NB_THREADS * i;
+        thread_arguments[i].size = n / NB_THREADS;
+        int code = pthread_create(&thread_ids[i], NULL, &naive_norm_pthread_wrapper, &thread_arguments[i]);
         if (code != 0)
         {
             printf("Error while creating a thread, aborting...\n");
@@ -43,8 +42,6 @@ float pthread_norm(float arr[], int n)
         }
 
         res += *ret_value;
-
-        free(thread_arguments[i]);
         free(ret_value);
     }
 

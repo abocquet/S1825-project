@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <math.h>
-
 #include "timer.h"
 #include "naive.h"
 #include "threaded.h"
@@ -26,7 +25,7 @@ int main()
 	start_timer;
 	printf("expected: %f, got: %f\n", log(N) + gamma, naive_norm(array, N));
 	end_timer;
-	float t1 = (double)(end - begin) / CLOCKS_PER_SEC;
+	double t1 = delta;
 
 	printf("\n");
 
@@ -34,7 +33,7 @@ int main()
 	start_timer;
 	printf("expected: %f, got: %f\n", log(N) + gamma, simd_norm(array, N));
 	end_timer;
-	float t2 = (double)(end - begin) / CLOCKS_PER_SEC;
+	double t2 = delta;
 	printf("Speedup : %f\n", t1 / t2);
 
 	printf("\n");
@@ -43,7 +42,7 @@ int main()
 	start_timer;
 	printf("expected: %f, got: %f\n", log(N) + gamma, pthread_norm(array, N));
 	end_timer;
-	float t3 = (double)(end - begin) / CLOCKS_PER_SEC;
+	double t3 = delta;
 	printf("Speedup : %f", t1 / t3);
 
 	return 0;
