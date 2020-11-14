@@ -5,9 +5,7 @@
 #include "threaded.h"
 #include "naive.h"
 
-#define NB_THREADS 2
-
-
+#define NB_THREADS 4
 
 float pthread_norm(float arr[], int n)
 {

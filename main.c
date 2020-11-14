@@ -6,16 +6,16 @@
 #include "threaded.h"
 #include "simd.h"
 
-#define N 800000
+#define N 1600000
 #define gamma 0.5772156649
 
 int main()
 {
 
-	float array[N];
+	float array[N] __attribute__((aligned(32)));
 	for (int i = 0; i < N; i++)
 	{
-		float tmp = 1 / (float)(i + 1);
+		float tmp = 1 / (float)(N - i);
 		array[i] = tmp * tmp;
 	}
 
@@ -26,6 +26,7 @@ int main()
 	start_timer;
 	printf("expected: %f, got: %f\n", log(N) + gamma, naive_norm(array, N));
 	end_timer;
+	float t1 = (double)(end - begin) / CLOCKS_PER_SEC;
 
 	printf("\n");
 
@@ -33,6 +34,17 @@ int main()
 	start_timer;
 	printf("expected: %f, got: %f\n", log(N) + gamma, simd_norm(array, N));
 	end_timer;
+	float t2 = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("Speedup : %f\n", t1 / t2);
+
+	printf("\n");
+
+	printf("Running pthread naive version\n");
+	start_timer;
+	printf("expected: %f, got: %f\n", log(N) + gamma, pthread_norm(array, N));
+	end_timer;
+	float t3 = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("Speedup : %f", t1 / t3);
 
 	return 0;
 }
