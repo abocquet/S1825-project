@@ -20,8 +20,8 @@ float simd_norm(float arr[], int n)
     return res;
 }
 
-
-float sum8(__m256 x) {
+float sum8(__m256 x)
+{
     // Taken from https://stackoverflow.com/questions/13219146/how-to-sum-m256-horizontally
 
     // hiQuad = ( x7, x6, x5, x4 )

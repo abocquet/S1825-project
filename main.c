@@ -5,13 +5,13 @@
 #include "threaded.h"
 #include "simd.h"
 
-#define N 1600000
+#define N 1000000
 #define gamma 0.5772156649
 
 int main()
 {
 
-	float array[N] __attribute__((aligned(32)));
+	float array[N];
 	for (int i = 0; i < N; i++)
 	{
 		float tmp = 1 / (float)(N - i);
@@ -21,29 +21,30 @@ int main()
 	clock_t begin;
 	clock_t end;
 
-	printf("Running naive version\n");
-	start_timer;
-	printf("expected: %f, got: %f\n", log(N) + gamma, naive_norm(array, N));
-	end_timer;
-	double t1 = delta;
+	timeit("Running naive version", 100) naive_norm(array, N);
+	end_timeit;
 
+	double t1 = delta;
 	printf("\n");
 
-	printf("Running SIMD version\n");
-	start_timer;
-	printf("expected: %f, got: %f\n", log(N) + gamma, simd_norm(array, N));
-	end_timer;
+	timeit("Running SIMD version", 100) simd_norm(array, N);
+	end_timeit;
 	double t2 = delta;
 	printf("Speedup : %f\n", t1 / t2);
 
 	printf("\n");
 
-	printf("Running pthread naive version\n");
-	start_timer;
-	printf("expected: %f, got: %f\n", log(N) + gamma, pthread_norm(array, N));
-	end_timer;
+	timeit("Running pthread naive version", 100) pthread_norm(array, N, 4, SEQ_MODE);
+	end_timeit;
 	double t3 = delta;
-	printf("Speedup : %f", t1 / t3);
+	printf("Speedup : %f\n", t1 / t3);
+
+	printf("\n");
+
+	timeit("Running pthread simd version", 100) pthread_norm(array, N, 4, SIMD_MODE);
+	end_timeit;
+	double t4 = delta;
+	printf("Speedup : %f\n", t1 / t4);
 
 	return 0;
 }
