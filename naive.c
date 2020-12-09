@@ -6,7 +6,7 @@ float naive_norm(float arr[], int n)
     float res = 0.0;
     for (int i = 0; i < n; i++)
     {
-        res += sqrt(arr[i]);
+        res += sqrt(fabsf(arr[i]));
     }
     return res;
 }

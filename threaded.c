@@ -78,7 +78,6 @@ void *naive_norm_pthread_wrapper(void *args)
 
 void *simd_norm_pthread_wrapper(void *args)
 {
-
     naive_norm_args *cast_args = (naive_norm_args *)args;
     float *res = malloc(sizeof(float));
     *res = simd_norm(cast_args->arr, cast_args->size);

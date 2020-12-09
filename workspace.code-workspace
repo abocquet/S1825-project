@@ -6,7 +6,7 @@
   ],
   "settings": {
     "code-runner.executorMap": {
-      "c": "cd $dir && gcc $dir/*.c -lm -mavx -lpthread -O3 -o $main.out && $dir/$main.out"
+      "c": "cd $dir && gcc $dir/*.c -lm -mavx2 -lpthread -O3 -o $main.out && $dir/$main.out 1000000 8"
     },
     "files.associations": {
       "array": "cpp",
