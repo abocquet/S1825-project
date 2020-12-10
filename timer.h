@@ -14,8 +14,8 @@ static int repetitions;
     delta = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec; \
     printf("Fragment ran in %lf ms\n", ((double)delta) / 1000);
 
-#define timeit(label, r, mem)                \
-    printf("%s\n", label);                   \
+#define timeit(label, r)                     \
+    printf("%-15s |", label);                \
     repetitions = r;                         \
     start_timer gettimeofday(&start, NULL);  \
     for (int _i = 0; _i < repetitions; _i++) \
@@ -25,6 +25,6 @@ static int repetitions;
     }                                                                              \
     gettimeofday(&stop, NULL);                                                     \
     delta = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec; \
-    printf("Ran in %lf ms / sample on a %d sample average\n", ((double)delta) / 1000 / repetitions, repetitions);
+    printf("%*lf ms | %*d ", 10, ((double)delta) / 1000 / repetitions, 9, repetitions);
 
 #endif

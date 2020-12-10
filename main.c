@@ -6,10 +6,13 @@
 #include "threaded.h"
 #include "simd.h"
 
-#define EPS 0.0000000001
+#define SAMPLES 100
 
 void fill_array(float *array, int size);
 
+/**
+ * On macOS, run with `gcc *.c -lm -mavx2 -lpthread -O3 -o main.out && main.out 800000 4` 
+ */
 int main(int argc, char *argv[])
 {
 	// Parse input arguments
@@ -39,50 +42,39 @@ int main(int argc, char *argv[])
 	float array[array_size];
 	fill_array(array, array_size);
 
-	float result = 0.0;
+	printf("     Version    |     Time     |  Samples  |     Result      |       Speedup\n");
+	printf("------------------------------------------------------------------------------\n");
 
 	clock_t begin;
 	clock_t end;
 
 	double r1, r2, r3, r4;
 
-	timeit("Running naive version", 100, r1) r1 = naive_norm(array, array_size);
+	timeit("naive", SAMPLES) r1 = naive_norm(array, array_size);
 	end_timeit;
-	printf("Result: %f\n", r1);
+	printf("| %*f | %*f ", 15, r1, 15, 1.0);
 
 	double t1 = delta;
 	printf("\n");
 
-	timeit("Running SIMD version", 100, r2) r2 = simd_norm(array, array_size);
+	timeit("SIMD", SAMPLES) r2 = simd_norm(array, array_size);
 	end_timeit;
 	double t2 = delta;
-	printf("Result: %f\n", r2);
-	printf("Speedup : %f\n", t1 / t2);
+	printf("| %*f | %*f ", 15, r2, 15, t1 / t2);
 
 	printf("\n");
 
-	timeit("Running pthread naive version", 100, r3) r3 = pthread_norm(array, array_size, 4, SEQ_MODE);
+	timeit("pthread naive", SAMPLES) r3 = pthread_norm(array, array_size, 4, SEQ_MODE);
 	end_timeit;
 	double t3 = delta;
-	printf("Result: %f\n", r3);
-	printf("Speedup : %f\n", t1 / t3);
+	printf("| %*f | %*f ", 15, r3, 15, t1 / t3);
 
 	printf("\n");
 
-	timeit("Running pthread simd version", 100, r4) r4 = pthread_norm(array, array_size, 4, SIMD_MODE);
+	timeit("pthread simd", SAMPLES) r4 = pthread_norm(array, array_size, 4, SIMD_MODE);
 	end_timeit;
 	double t4 = delta;
-	printf("Result: %f\n", r4);
-	printf("Speedup : %f\n", t1 / t4);
-
-	if (fabs(r1 - r2) > EPS || fabs(r1 - r3) > EPS || fabs(r1 - r4) > EPS)
-	{
-		printf("\nAll results are not the same\n");
-	}
-	else
-	{
-		printf("\nAll results are equal (up to %f)\n", EPS);
-	}
+	printf("| %*f | %*f ", 15, r4, 15, t1 / t4);
 
 	return 0;
 }
