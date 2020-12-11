@@ -6,7 +6,7 @@
 #include "threaded.h"
 #include "simd.h"
 
-#define SAMPLES 100
+#define SAMPLES 1000
 
 void fill_array(float *array, int size);
 
@@ -39,7 +39,9 @@ int main(int argc, char *argv[])
 
 	printf("Array size: %d\nNumber of threads: %d\n\n", array_size, thread_number);
 
-	float array[array_size];
+	float *array;
+	posix_memalign((void **)&array, 32, array_size * sizeof(float));
+
 	fill_array(array, array_size);
 
 	printf("     Version    |     Time     |  Samples  |     Result      |       Speedup\n");
@@ -71,10 +73,12 @@ int main(int argc, char *argv[])
 
 	printf("\n");
 
-	timeit("pthread simd", SAMPLES) r4 = pthread_norm(array, array_size, 4, SIMD_MODE);
+	timeit("pthread SIMD", SAMPLES) r4 = pthread_norm(array, array_size, 4, SIMD_MODE);
 	end_timeit;
 	double t4 = delta;
 	printf("| %*f | %*f ", 15, r4, 15, t1 / t4);
+
+	free(array);
 
 	return 0;
 }
@@ -88,5 +92,6 @@ void fill_array(float *array, int size)
 	for (int i = 0; i < size; i++)
 	{
 		array[i] = (float)rand() / RAND_MAX - 0.5;
+		array[i] /= 1000000;
 	}
 }

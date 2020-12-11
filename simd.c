@@ -7,8 +7,8 @@ float sum8(__m256 x);
 float simd_norm(float arr[], int n)
 {
     int v = n / 8;
-    __m256 res = _mm256_setzero_ps();
-    __m256 mask = get_abs_mask();
+    __m256 __attribute__((aligned(32))) res = _mm256_setzero_ps();
+    __m256 __attribute__((aligned(32))) mask = get_abs_mask();
     __m256 __attribute__((aligned(32))) vectorized;
 
     for (int i = 0; i < v; i++)
