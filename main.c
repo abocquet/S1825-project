@@ -39,19 +39,21 @@ int main(int argc, char *argv[])
 
 	printf("Array size: %d\nNumber of threads: %d\n\n", array_size, thread_number);
 
+	// Init array for the benchmark and timing variables
 	float *array;
 	posix_memalign((void **)&array, 32, array_size * sizeof(float));
-
 	fill_array(array, array_size);
-
-	printf("     Version    |     Time     |  Samples  |     Result      |       Speedup\n");
-	printf("------------------------------------------------------------------------------\n");
 
 	clock_t begin;
 	clock_t end;
 
 	double r1, r2, r3, r4;
 
+	// Display result table header
+	printf("     Version    |     Time     |  Samples  |     Result      |       Speedup\n");
+	printf("------------------------------------------------------------------------------\n");
+
+	// BENCHMARK 1
 	timeit("naive", SAMPLES) r1 = naive_norm(array, array_size);
 	end_timeit;
 	printf("| %*f | %*f ", 15, r1, 15, 1.0);
@@ -59,6 +61,7 @@ int main(int argc, char *argv[])
 	double t1 = delta;
 	printf("\n");
 
+	// BENCHMARK 2
 	timeit("SIMD", SAMPLES) r2 = simd_norm(array, array_size);
 	end_timeit;
 	double t2 = delta;
@@ -66,6 +69,7 @@ int main(int argc, char *argv[])
 
 	printf("\n");
 
+	// BENCHMARK 3
 	timeit("pthread naive", SAMPLES) r3 = pthread_norm(array, array_size, 4, SEQ_MODE);
 	end_timeit;
 	double t3 = delta;
@@ -73,6 +77,7 @@ int main(int argc, char *argv[])
 
 	printf("\n");
 
+	// BENCHMARK 4
 	timeit("pthread SIMD", SAMPLES) r4 = pthread_norm(array, array_size, 4, SIMD_MODE);
 	end_timeit;
 	double t4 = delta;
@@ -83,12 +88,11 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+/**
+ * Fill an array with random numbers.
+ */
 void fill_array(float *array, int size)
 {
-	/**
-     * Fill an array with random numbers.
-    */
-
 	for (int i = 0; i < size; i++)
 	{
 		array[i] = (float)rand() / RAND_MAX - 0.5;

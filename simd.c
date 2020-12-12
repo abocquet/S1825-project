@@ -4,6 +4,10 @@
 
 float sum8(__m256 x);
 
+/**
+ * SIMD version of naive_norm
+ * WARNING: only is exact on an array which size is a multiple of 8
+ */
 float simd_norm(float arr[], int n)
 {
     int v = n / 8;
@@ -22,6 +26,9 @@ float simd_norm(float arr[], int n)
     return sum8(res);
 }
 
+/**
+ * Sums elements of an __m256 into a float
+ */
 float sum8(__m256 x)
 {
     // Taken from https://stackoverflow.com/questions/13219146/how-to-sum-m256-horizontally
@@ -53,11 +60,10 @@ __m256 get_abs_mask()
     return _mm256_castsi256_ps(_mm256_srli_epi32(minus1, 1));
 }
 
+/**
+ * Return the absolute value of `v`. `mask` should come from `get_abs_mask()`.
+ */
 __m256 _mm256_abs_ps(__m256 v, __m256 mask)
 {
-    /**
-     * Return the absolute value of `v`. `mask` should come from `get_abs_mask()`.
-     */
-
     return _mm256_and_ps(v, mask);
 }

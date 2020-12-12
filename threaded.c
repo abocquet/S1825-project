@@ -7,6 +7,12 @@
 #include "naive.h"
 #include "arithmetic.h"
 
+/**
+ * thread and SIMDed version of `naive_norm`, accepts an array of any size.
+ * mode:
+ * - SIMD_MODE (0): will spawn `simd_norm` jobs
+ * - SEQ_MODE (1): will spawn `naive_norm` jobs
+ */
 float pthread_norm(float arr[], int n, int n_threads, int mode)
 {
     // Make sure n is divisible by both the number of threads and 8, which is the number of parallel execution we do with SIMD
@@ -16,6 +22,7 @@ float pthread_norm(float arr[], int n, int n_threads, int mode)
     pthread_t thread_ids[n_threads];
     naive_norm_args thread_arguments[n_threads];
     void *(*wrapper_function)(void *);
+
     if (mode == SIMD_MODE)
     {
         wrapper_function = &simd_norm_pthread_wrapper;
@@ -48,6 +55,9 @@ float pthread_norm(float arr[], int n, int n_threads, int mode)
     {
         res += naive_norm(arr + load_per_thread * (n_threads - 1), load_per_thread);
     }
+
+    // The last elements of the array are dealt with `naive_norm` since if will be an array of size 0 to 7
+    // and thus cannot be dealt with using SIMD (designed for arrays of size multiple of 8 only)
     res += naive_norm(arr + n, remainder);
 
     for (int i = 0; i < n_threads - 1; i++)
@@ -56,26 +66,33 @@ float pthread_norm(float arr[], int n, int n_threads, int mode)
         int code = pthread_join(thread_ids[i], (void *)&ret_value);
         if (code != 0)
         {
+            // This is exceptional behaviour so we allow for crashing.
+            // It could be recovered but this is not the point of the assignment.
             printf("Error while joining a thread, aborting...\n");
             abort();
         }
 
         res += *ret_value;
-        free(ret_value);
+        free(ret_value); // `ret_value` must be freed manually since we use `malloc` in `naive_norm_pthread_wrapper` and `simd_norm_pthread_wrapper`
     }
 
     return res;
 }
 
+/**
+ * Simple wrapper for `naive_norm` around a pthread
+ */
 void *naive_norm_pthread_wrapper(void *args)
 {
-
     naive_norm_args *cast_args = (naive_norm_args *)args;
     float *res = malloc(sizeof(float));
     *res = naive_norm(cast_args->arr, cast_args->size);
     pthread_exit((void *)res);
 }
 
+/**
+ * Simple wrapper for `simd_norm` around a pthread
+ */
 void *simd_norm_pthread_wrapper(void *args)
 {
     naive_norm_args *cast_args = (naive_norm_args *)args;
