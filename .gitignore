@@ -1,4 +1,5 @@
-main.out*
+main.out
+main.out.dSYM/
 .out
 .vscode
 .idea
