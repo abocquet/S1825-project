@@ -1,6 +1,8 @@
-main.out
+main.out*
 .out
 .vscode
 .idea
 cmake-build-debug
 .vagrant
+threaded
+timer
